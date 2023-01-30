@@ -10,24 +10,6 @@ web-ui-auto分为 C端 (python+selenium+pytest+allure) 实现测试用例代码�
 
 初步效果如下 [对应项目](https://github.com/Mika2016/Salvation) 有时间持续更新！：
 
-![](https://github.com/Mika2016/web-ui/blob/main/doct/img/001.png)
-
-![](https://github.com/Mika2016/web-ui/blob/main/doct/img/003.png)
-
-### 后台管理端：
-
-![](https://github.com/Mika2016/web-ui/blob/main/doct/img/admin1.png)
-
-![](https://github.com/Mika2016/web-ui/blob/main/doct/img/admin2.png)
-
-### 项目框架设计图：
-
-![](https://github.com/Mika2016/web-ui/blob/main/doct/img/frame.png)
-
-### 项目架构详情：
-
-![](https://github.com/Mika2016/web-ui/blob/main/doct/img/frameexplains.png)
-
 ### 测试输出报告：
 
 ![](https://github.com/Mika2016/web-ui/blob/main/doct/img/run001.jpg)

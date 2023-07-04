@@ -9,7 +9,7 @@ import os
 import allure
 import pytest
 
-from pageobj.wy163 import WangYi
+from page.wy163 import WangYi
 from public import reda_pytestdata
 
 

@@ -15,7 +15,7 @@ import os
 import allure
 import pytest
 
-from pageobj.android import OpenWeChatPage
+from page.android import OpenWeChatPage
 
 
 

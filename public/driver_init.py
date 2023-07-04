@@ -136,7 +136,7 @@ class WebInit:
         判断url 地址正常请求
         """
         try:
-            rep = requests.get(url, timeout=10)  # 默认设置10秒超时
+            rep = requests.get(url, timeout=10, verify=False)  # 默认设置10秒超时
             code = rep.status_code
             if code == 200:
                 return True
@@ -191,7 +191,7 @@ class WebInit:
 
             return self.setup()
 
-    def browaer_setup_args(self, driver: T) -> T:
+    def browser_setup_args(self, driver: T) -> T:
         """
         单机浏览器参数设置
         :param driver: driver驱动浏览器
@@ -201,7 +201,7 @@ class WebInit:
         driver.get(self.url)
         return driver
 
-    def browaer_setups_args(self, descap: str, option=None) -> T:
+    def browser_setups_args(self, descap: str, option=None) -> T:
         """
         集群浏览器参数设置
         :param descap:启动参数
@@ -231,13 +231,13 @@ class WebInit:
                     if self.browser == 'chrome':  # 谷歌浏览器
                         option = self.linux_chrome_args
                         driver = webdriver.Chrome(executable_path=LUINX_CHROMEDRIVER, options=option)
-                        return self.browaer_setup_args(driver)
+                        return self.browser_setup_args(driver)
 
                     elif self.browser == 'firefox':  # 火狐浏览器
                         options = self.linux_firefox_args
                         driver = webdriver.Firefox(executable_path=LUINX_FIREFOXDRIVER, options=options,
                                                    service_log_path=log_path)
-                        drivers = self.browaer_setup_args(driver)
+                        drivers = self.browser_setup_args(driver)
                         return drivers  # 在linux下启用 火狐浏览器需要借助Display
 
                     else:
@@ -249,15 +249,15 @@ class WebInit:
                     if self.browser == 'chrome':
 
                         driver = webdriver.Chrome(executable_path=MAC_CHROMEDRIVER)
-                        return self.browaer_setup_args(driver)
+                        return self.browser_setup_args(driver)
 
                     elif self.browser == 'firefox':
                         driver = webdriver.Firefox(executable_path=MAC_FIREFOXDRIVER, service_log_path=log_path)
-                        return self.browaer_setup_args(driver)
+                        return self.browser_setup_args(driver)
 
                     elif self.browser == 'safari':
                         driver = webdriver.Safari()
-                        return self.browaer_setup_args(driver)
+                        return self.browser_setup_args(driver)
                     else:
                         logger.error(f'mac系统不支持此浏览器: {self.browser}')
 
@@ -266,15 +266,17 @@ class WebInit:
                     if self.browser == 'ie':
                         logger.warning('请确保当前服务器安装IE!')
                         driver = webdriver.Ie(executable_path=IE_PATH)
-                        return self.browaer_setup_args(driver)
+                        return self.browser_setup_args(driver)
 
                     if self.browser == 'chrome':
+                        option = self.linux_chrome_args
+                        # driver = webdriver.Chrome(executable_path=WIN_CHROMEDRIVER, options=option)
                         driver = webdriver.Chrome(executable_path=WIN_CHROMEDRIVER)
-                        return self.browaer_setup_args(driver)
+                        return self.browser_setup_args(driver)
 
                     elif self.browser == 'firefox':
                         driver = webdriver.Firefox(executable_path=WIN_FIREFOXDRIVER, service_log_path=log_path)
-                        return self.browaer_setup_args(driver, )
+                        return self.browser_setup_args(driver, )
 
                     else:
                         logger.error(f'windos系统不支持此浏览器: {self.browser}')
@@ -302,12 +304,12 @@ class WebInit:
                     if self.browser == 'chrome':
                         option = self.linux_chrome_args
                         des_cap = DesiredCapabilities.CHROME
-                        return self.browaer_setups_args(des_cap, option=option)
+                        return self.browser_setups_args(des_cap, option=option)
 
                     elif self.browser == 'firefox':
                         options = self.linux_firefox_args
                         des_cap = DesiredCapabilities.FIREFOX
-                        return self.browaer_setups_args(des_cap, option=options)
+                        return self.browser_setups_args(des_cap, option=options)
                     else:
                         logger.error('linux不支持此浏览器')
 
@@ -315,15 +317,15 @@ class WebInit:
                 elif current_sys == 'darwin':  # mac 系统
                     if self.browser == 'safari':
                         des_cap = DesiredCapabilities.SAFARI
-                        return self.browaer_setups_args(des_cap)
+                        return self.browser_setups_args(des_cap)
 
                     elif self.browser == 'chrome':
                         des_cap = DesiredCapabilities.CHROME
-                        return self.browaer_setups_args(des_cap)
+                        return self.browser_setups_args(des_cap)
 
                     elif self.browser == 'firefox':
                         des_cap = DesiredCapabilities.FIREFOX
-                        return self.browaer_setups_args(des_cap)
+                        return self.browser_setups_args(des_cap)
 
                     else:
                         logger.error('mac不支持此浏览器')
@@ -332,15 +334,15 @@ class WebInit:
                 elif current_sys == 'win32':
                     if self.browser == 'ie':
                         des_cap = DesiredCapabilities.INTERNETEXPLORER
-                        return self.browaer_setups_args(des_cap)
+                        return self.browser_setups_args(des_cap)
 
                     if self.browser == 'chrome':
                         des_cap = DesiredCapabilities.CHROME
-                        return self.browaer_setups_args(des_cap)
+                        return self.browser_setups_args(des_cap)
 
                     elif self.browser == 'firefox':
                         des_cap = DesiredCapabilities.FIREFOX
-                        return self.browaer_setups_args(des_cap)
+                        return self.browser_setups_args(des_cap)
 
                     else:
                         logger.error('windos不支持此浏览器')

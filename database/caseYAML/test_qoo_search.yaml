@@ -5,7 +5,7 @@
   precond: 前置说明       # 前置说明
   testdata: # 测试数据 /列表
     - content: mika
-#    - content: lucy
+    - content: lucy
 #    - content: c++
 #    - content: go
 #    - content: shell

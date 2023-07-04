@@ -1,0 +1,86 @@
+- model: Qoo
+- casename: test_qoo_email_login
+  precond: # 前置说明
+  testdata: # 测试数据 /列表
+  element:
+    - casesteid: 1            # 操作步骤
+      types: xpath             # 定位类型  支持('id', 'name', 'xpath', 'css', 'class', 'link', 'partlink', 'tag', 'function')
+      operate: click          # 操作类型 支持 input(输入) , clear(清除) , submit(提交),jsclear (js清除),jsclear_continue_input(js清除后输入),clear_continue_input(清除在输入) 、click(点击) ,text(提取文本) ,scroll(滑动下拉) get_html(获取当前网页信息) get_url(获取当前url)* 注意 types = function  时  operate类型必须为 get_html get_url  locate可为空
+      locate: //a[@class='wrap']              # 定位元素
+      listindex:              # 多个时列表索引 单个为空 /int
+      locawait:              #操作等待时间  folt/s
+      info: 點擊遊戲庫      # 操作说明
+
+- casename: click_login_button
+  precond: # 前置说明
+  testdata: # 测试数据 /列表
+  element:
+    - casesteid: 1
+      types: xpath
+      operate: click
+      locate: //a[@class='qm-login']
+      listindex: # 多个时列表索引 单个为空 /int
+      locawait:
+      info: click login button
+
+- casename: click_discord_icon
+  precond: # 前置说明
+  testdata: # 测试数据 /列表
+  element:
+    - casesteid: 1
+      types: xpath
+      operate: click
+      locate: //a[@class='sprite-icon-discord']
+      listindex: # 多个时列表索引 单个为空 /int
+      locawait:
+      info: click discord icon
+
+- casename: input_discord_email
+  precond: # 前置说明
+  testdata: # 测试数据 /列表
+  element:
+    - casesteid: 1
+      types: xpath
+      operate: input
+      locate: //input[@name='email']
+      listindex: # 多个时列表索引 单个为空 /int
+      locawait:
+      info: input email
+
+- casename: input_discord_pwd_and_submit
+  precond: # 前置说明
+  testdata: # 测试数据 /列表
+  element:
+    - casesteid: 1
+      types: xpath
+      operate: input
+      locate: //input[@name='password']
+      listindex: # 多个时列表索引 单个为空 /int
+      locawait:
+      info: input password
+    - casesteid: 2
+      types: xpath
+      operate: click
+      locate: //button[@type='submit']
+      listindex: # 多个时列表索引 单个为空 /int
+      locawait:
+      info: click submit
+    - casesteid: 3
+      types: xpath
+      operate: click
+      locate: //div[text()='授权']
+      listindex: # 多个时列表索引 单个为空 /int
+      locawait:
+      info: click discord icon
+
+- casename: get_user_login_stats
+  precond: # 前置说明
+  testdata: # 测试数据 /列表
+  element:
+    - casesteid: 1
+      types: xpath
+      operate: element
+      locate: //i[@class='avatar qoo-attr-notify']
+      listindex: # 多个时列表索引 单个为空 /int
+      locawait:
+      info: get user avatar

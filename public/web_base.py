@@ -6,6 +6,7 @@
 
 import os
 import sys
+import threading
 import time
 from enum import Enum
 from typing import TypeVar, Optional
@@ -29,8 +30,8 @@ EM = TypeVar('EM')  # 可以是任何类型。
 
 # 读取配置参数
 WEB_UI = reda_conf('WEB_UI')
-WEB_POLL_FREQUENCY = WEB_UI.get('WEB_WIMPLICITLY_WAIT_TIME')
-WEB_IMPLICITLY_WAIT_TIME = WEB_UI.get('WEB_POLL_FREQUENCY')
+WEB_POLL_FREQUENCY = WEB_UI.get('WEB_POLL_FREQUENCY')
+WEB_IMPLICITLY_WAIT_TIME = WEB_UI.get('WEB_WIMPLICITLY_WAIT_TIME')
 
 # 读取配置参数
 APP_UI = reda_conf('APP_UI')
@@ -132,10 +133,10 @@ class Base:
         :return:
         """
         types = types.lower()
-        locate_typess = Locaate.web_types.value
+        locate_types = Locaate.web_types.value
 
-        if types not in locate_typess:
-            logger.error(f'web目前只支持{locate_typess}')
+        if types not in locate_types:
+            logger.error(f'web目前只支持{locate_types}')
             raise ErrorExcep('操作类型不支持')
 
         if types == "id":
@@ -354,7 +355,7 @@ class Base:
         el = None
         if index is not None:
             el = 's'
-        target = self.driver_element(types, locate, el=el)
+        target = self.driver_element(types, locate, is_els=el)
         logger.debug('滚动页面')
         if index is not None:
             self.driver.execute_script("arguments[0].scrollIntoView();", target[index])
@@ -411,7 +412,7 @@ class Base:
         logger.debug('切换到 iframe')
         if el is not None and index is not None:
             # 多个定位定位 利用index 列表索引点击
-            element = self.driver_element(types=types, locate=locate, el=el)[index]
+            element = self.driver_element(types=types, locate=locate, is_els=el)[index]
             self.driver.switch_to.frame(element)
         else:
             # 单个定位点击
@@ -748,7 +749,7 @@ class Base:
         logger.debug('回车键操作')
         if el is not None and index is not None:
             # 多个定位
-            self.driver_element(types=types, locate=locate, el=el)[index].send_keys(Keys.ENTER)
+            self.driver_element(types=types, locate=locate, is_els=el)[index].send_keys(Keys.ENTER)
         else:
             # 单个定位提取文本元素必须是唯一 如果多个时默认返回第一个
             self.driver_element(types=types, locate=locate).send_keys(Keys.ENTER)
@@ -773,37 +774,36 @@ class Base:
             keys = Keys.UP
 
         if el is not None and index is not None:
-            self.driver_element(types=types, locate=locate, el=el)[index].send_keys(keys)
+            self.driver_element(types=types, locate=locate, is_els=el)[index].send_keys(keys)
         else:
             self.driver_element(types=types, locate=locate).send_keys(keys)
 
-    def driver_element(self, types: str, locate: str, el: str = None, ) -> EM or None:
+    def driver_element(self, types: str, locate: str, is_els: str = None, ) -> EM or None:
         """
         返回 element
         :param types: 定位类型
         :param locate: 定位元素
-        :param el: 单个/多个  默认 find_element=None 单个  / 如果 find_element = 's' 多个
+        :param is_els: 单个/多个  默认 find_element=None 单个  / 如果 find_element = 's' 多个
         :return: driver 对象
         """
         types = self.get_by_type(types)
         try:
-            if el is not None:  # find_elements
+            if is_els is not None:  # find_elements
                 # element = WebDriverWait(self.driver, timeout=IMPLICITLY_WAIT_TIME,
                 #                         poll_frequency=POLL_FREQUENCY).until(
                 #     lambda x: x.find_elements(types, locate))
-                element = WebDriverWait(self.driver, timeout=IMPLICITLY_WAIT_TIME,
-                                        poll_frequency=POLL_FREQUENCY).until(
+                return WebDriverWait(self.driver, timeout=IMPLICITLY_WAIT_TIME,
+                                     poll_frequency=POLL_FREQUENCY).until(
                     EC.visibility_of_all_elements_located((types, locate)))
             else:  # find_element
                 # element = WebDriverWait(self.driver, timeout=IMPLICITLY_WAIT_TIME,
                 #                         poll_frequency=POLL_FREQUENCY).until(
                 #     lambda x: x.find_element(types, locate))
-                element = WebDriverWait(self.driver, timeout=IMPLICITLY_WAIT_TIME,
-                                        poll_frequency=POLL_FREQUENCY).until(
+                return WebDriverWait(self.driver, timeout=IMPLICITLY_WAIT_TIME,
+                                     poll_frequency=POLL_FREQUENCY).until(
                     EC.visibility_of_element_located((types, locate)))
         except TimeoutException:
             raise TimeoutException("在固定時間內未找到元素，請檢查代碼！")
-        return element
 
     def web_submit(self, types: str, locate: str, index: int = None) -> None:
         """
@@ -819,7 +819,7 @@ class Base:
         logger.debug('提交操作')
         if el is not None and index is not None:
             # 多个定位定位 利用index 列表索引点击
-            self.driver_element(types=types, locate=locate, el=el)[index].submit()
+            self.driver_element(types=types, locate=locate, is_els=el)[index].submit()
         else:
             # 单个定位点击
             self.driver_element(types=types, locate=locate).submit()
@@ -837,7 +837,7 @@ class Base:
             el = 'l'
         logger.debug('web右键点击')
         if el is not None and index is not None:
-            element = self.driver_element(types=types, locate=locate, el=el)[index].click()
+            element = self.driver_element(types=types, locate=locate, is_els=el)[index].click()
             ActionChains(self.driver).context_click(element).perform()
         else:
             # 单个定位点击
@@ -857,7 +857,7 @@ class Base:
             el = 'l'
         logger.debug('web双击点击')
         if el is not None and index is not None:
-            element = self.driver_element(types=types, locate=locate, el=el)[index]
+            element = self.driver_element(types=types, locate=locate, is_els=el)[index]
             ActionChains(self.driver).double_click(element).perform()
         else:
             # 单个定位点击
@@ -877,7 +877,7 @@ class Base:
             el = 'l'
         logger.debug('web js清除操作')
         if el is not None and index is not None:
-            element = self.driver_element(types=types, locate=locate, el=el)[index]
+            element = self.driver_element(types=types, locate=locate, is_els=el)[index]
         else:
             element = self.driver_element(types=types, locate=locate)
 
@@ -905,7 +905,7 @@ class Base:
         self.sleep(0.5)
         self.often_input(types=types, locate=locate, text=text, index=index)
 
-    def often_text(self, types: str, locate: str, index: int = None) -> None or EM:
+    def often_text(self, types: str, locate: str, index: int = None) -> None or str:
         """
         获取元素  提取文本内容
         :param types: 定位类型
@@ -919,7 +919,7 @@ class Base:
         logger.debug('提取文本内容')
         if el is not None and index is not None:
             # 多个定位
-            return self.driver_element(types=types, locate=locate, el=el)[index].text
+            return self.driver_element(types=types, locate=locate, is_els=el)[index].text
         else:
             # 单个定位提取文本元素必须是唯一 如果多个时默认返回第一个
             return self.driver_element(types=types, locate=locate).text
@@ -938,7 +938,7 @@ class Base:
         logger.debug('点击操作')
         if el is not None and index is not None:
             # 多个定位定位 利用index 列表索引点击
-            self.driver_element(types=types, locate=locate, el=el)[index].click()
+            self.driver_element(types=types, locate=locate, is_els=el)[index].click()
         else:
             # 单个定位点击
             self.driver_element(types=types, locate=locate).click()
@@ -957,7 +957,7 @@ class Base:
             el = 'l'
         logger.debug('输入操作')
         if el is not None and index is not None:
-            self.driver_element(types=types, locate=locate, el=el)[index].send_keys(text)
+            self.driver_element(types=types, locate=locate, is_els=el)[index].send_keys(text)
         else:
             self.driver_element(types=types, locate=locate, ).send_keys(text)
 
@@ -974,7 +974,7 @@ class Base:
             el = 'l'
         logger.debug('清除操作')
         if el is not None and index is not None:
-            self.driver_element(types=types, locate=locate, el=el)[index].clear()
+            self.driver_element(types=types, locate=locate, is_els=el)[index].clear()
         else:
             self.driver_element(types=types, locate=locate).clear()
 
@@ -1047,13 +1047,14 @@ class Web(Base):
 
         if operate is None:
             el = index  # 如果index 为空默认多个
-            return self.driver_element(types=types, locate=locate, el=el)
+            return self.driver_element(types=types, locate=locate, is_els=el)
 
         else:
             if operate == 'input':  # 输入操作
                 if text is not None:
                     self.sleep(wait)
                     logger.debug(notes)
+                    logger.debug(f'輸入的文本：{text}')
                     return self.often_input(types=types, locate=locate, text=text, index=index)
                 else:
                     logger.error(' 函数必须传递 text 参数')
@@ -1123,39 +1124,51 @@ class Web(Base):
                 logger.debug(notes)
                 return self.web_html_content
 
-    def webexe(self, yamlfile, case, text=None, wait=0.01):
+    def web_exe(self, yaml_file, case, text=None, wait=0.01) -> any:
         """
         自动执行定位步骤
-        :param yamlfile:  yaml文件
+        :param yaml_file:  yaml文件
         :param case: yaml定位用例
         :param text:  输入内容
         :param wait:  等待多少
         :return:
         """
         result = None  # 断言结果  最后一步才返回
-
-        yaml = replace_py_yaml(yamlfile)
-
+        yaml = replace_py_yaml(yaml_file)
         locator_data = self.get_case(yaml, case)
         locator_step = locator_data.stepCount()
 
         for locator in range(locator_step):
             waits = locator_data.locawait(locator)
-            if locator_data.operate(locator) in ('input', 'clear_continue_input', 'jsclear_continue_input'):
-                self.web_judge_execution(types=locator_data.types(locator), locate=locator_data.locate(locator),
-                                         operate=locator_data.operate(locator), notes=locator_data.info(locator),
-                                         text=text, index=locator_data.listindex(locator))
-            else:
-                result = self.web_judge_execution(types=locator_data.types(locator),
-                                                  locate=locator_data.locate(locator),
-                                                  operate=locator_data.operate(locator),
-                                                  notes=locator_data.info(locator),
-                                                  index=locator_data.listindex(locator))
-            # 等待时间 如果yaml没有就使用默认
-            if waits is not None:
-                wait = waits
 
-            self.sleep(wait)
+            if locator_data.operate(locator) in ('input', 'clear_continue_input', 'jsclear_continue_input'):
+                with allure.step(
+                        f'定位类型:{locator_data.types(locator)}，定位元素：{locator_data.locate(locator)}，操作：{locator_data.operate(locator)}，文本：{text}，操作说明：{locator_data.info(locator)}'):
+                    self.web_judge_execution(types=locator_data.types(locator),
+                                             locate=locator_data.locate(locator),
+                                             operate=locator_data.operate(locator),
+                                             notes=locator_data.info(locator),
+                                             text=text,
+                                             index=locator_data.listindex(locator))
+            elif 'element'.__eq__(locator_data.operate(locator)):
+                with allure.step(
+                        f'定位类型:{locator_data.types(locator)}，定位元素：{locator_data.locate(locator)}，操作：{locator_data.operate(locator)}，操作说明：{locator_data.info(locator)}'):
+                    result = self.driver_element(types=locator_data.types(locator),
+                                                 locate=locator_data.locate(locator), )
+            else:
+                with allure.step(
+                        f'定位类型:{locator_data.types(locator)}，定位元素：{locator_data.locate(locator)}，操作：{locator_data.operate(locator)}，操作说明：{locator_data.info(locator)}'):
+                    result = self.web_judge_execution(types=locator_data.types(locator),
+                                                      locate=locator_data.locate(locator),
+                                                      operate=locator_data.operate(locator),
+                                                      notes=locator_data.info(locator),
+                                                      index=locator_data.listindex(locator))
+        # 等待时间 如果yaml没有就使用默认
+        if waits is not None:
+            wait = waits
+
+        self.sleep(wait)
+
         return result
 
 
@@ -1206,4 +1219,4 @@ class AutoRunCase(Web):
         # 断言函数
         if ('assertion' and 'assertype') in test_dict[0] and result:  # 有断言需求并且有实际值才进行断言
             is_assertion(test_date, result)
-         # return result
+        # return result

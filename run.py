@@ -37,12 +37,12 @@ class RunPytest:
         参数值划分  生成demo '{} or {} or {}  '.format(mlist[0], mlist[1], mlist[2]) 根据传递长度生成 {} or
         """
         if mlist is not None:
-            mdata = ''
+            m_data = ''
             for index, i in enumerate(mlist):
-                mdata += str(i)
+                m_data += str(i)
                 if index < len(mlist) - 1:
-                    mdata += ' or '
-            return mdata
+                    m_data += ' or '
+            return m_data
 
     @classmethod
     def run_model(cls, m, n, reruns, mlist, dir):
@@ -95,8 +95,8 @@ class RunPytest:
         # PRPORE_SCREEN_DIR = os.path.join(BASE_DIR, "output", "{}".format(dir), "report_screen")
 
         # 判断路径文件是否存在 不存在就创建
-        listpathdir = [PRPORE_JSON_DIR, PRPORE_ALLURE_DIR]  # PRPORE_SCREEN_DIR
-        for pathdir in listpathdir:
+        list_path_dir = [PRPORE_JSON_DIR, PRPORE_ALLURE_DIR]  # PRPORE_SCREEN_DIR
+        for pathdir in list_path_dir:
             if not os.path.exists(pathdir):
                 os.makedirs(pathdir)
 
@@ -147,7 +147,6 @@ class RunPytest:
         :param content:  传递的内容
         :return:
         """
-
         if types == 'w':
             EnterpriseWeChatNotice.send_txt(content)
         elif types == 'd':
@@ -164,7 +163,6 @@ class RunPytest:
         正式运行所有脚本 配置django 管理
         :return:
         """
-
         # 执行前检查是否清除报告
         DelReport().run_del_report()
 
@@ -175,13 +173,13 @@ class RunPytest:
         prpore_json_dir, prpore_allure_dir = cls.output_path(results_dir)
 
         # 判断运行模块
-        run_modle = cls.run_model(module_name, thread_num, reruns, mlist, prpore_json_dir)
+        run_model = cls.run_model(module_name, thread_num, reruns, mlist, prpore_json_dir)
 
         # 生成测试报告
-        if run_modle:
+        if run_model:
             os.system(f'allure generate {prpore_json_dir} -o {prpore_allure_dir} --clean')
             logger.info('测试报告生成完成！')
-
+        logger.info(f'is_email: {is_email}')
         # 发送邮件 附件为zip格式
         if is_email != 'False' and is_email != '0':
             SendEMail().send_file(content='demo项目测试完成已经完成发送报告请查收', subject='demo项目测测试结果',
@@ -197,22 +195,21 @@ class RunPytest:
         return html_index
 
     @staticmethod
-    def run_bebug():
+    def run_debug():
         """
         bebug 调试
         :return:
         """
-
         # 执行前检查是否清除报告
         DelReport().run_del_report()
 
         # pytest.main(
         #     ['-m', 'test_qoo_search_web', '-n=1', '-s', '--alluredir', PRPORE_JSON_DIR, CASE_DIR])
         pytest.main(
-            ['-m', 'test_qoo_search_web or testbaidu_web', '-n=1', '-s', '--alluredir', PRPORE_JSON_DIR, CASE_DIR])
+            ['-m', 'test_qoo_search_web or test_qoo_login_web', '-n=1', '-s', '--alluredir', PRPORE_JSON_DIR, CASE_DIR])
 
         # 生成测试报告
-        os.system(f'allure generate {PRPORE_JSON_DIR} -o {PRPORE_ALLURE_DIR} --clean')
+        logger.info(f'allure generate {PRPORE_JSON_DIR} -o {PRPORE_ALLURE_DIR} --clean')
         logger.info('测试报告生成完成！')
         #
         # # 发送邮件zip格式
@@ -224,7 +221,8 @@ class RunPytest:
 
 if __name__ == '__main__':
     # RunPytest.run()
-    RunPytest.run_bebug()
+
+    RunPytest.run_debug()
 
 #  RunPytest.run() Python run.py all(项目或者模块) 1(线程数) 1(失败重跑次数) dir(生成目录名称) True(开启邮件发送) a(启用企业微信钉钉消息通知)
 # addopts 参数说明

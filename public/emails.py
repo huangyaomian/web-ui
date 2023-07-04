@@ -140,14 +140,13 @@ class SendEMail:
             logger.error('发送邮件失败！', e)
 
     def send_img(self, subject: str, content, filename: str, content_type: str = 'html'):
-        '''
+        """
         发送带图片的邮件
-        :param to_user: 对方邮箱
         :param subject: 邮件主题
         :param content: 邮件正文
         :param filename: 图片路径
         :param content_type: 内容格式
-        '''
+        """
         subject = subject
         msg = MIMEMultipart('related')
         # Html正文必须包含<img src="cid:imageid" alt="imageid" width="100%" height="100%>
@@ -173,13 +172,14 @@ class SendEMail:
         except Exception as e:
             logger.error('发送邮件失败！', e)
 
+
 # if __name__ == '__main__':
-# # host = 'smtp.163.com'
-# # port = '465'
-# # username = 'xxx@163.com'
-# # password = 'xxxx'  # 密码或授权码
+# host = 'smtp.163.com'
+# port = '465'
+# username = 'xxx@163.com'
+# password = 'xxxx'  # 密码或授权码
 #     e = SendEMail()
-#
-#     e.send_text('python发送邮件测试', 'python20222')
-# e.send_file(['Mika@reda-flight.com'], 'demo项目测试完成已经完成发送报告请查收', 'demo项目测测试结果',
-#             '/Users/reda-flight/Desktop/svn/web-ui/output/report_allure', 'testport')
+
+    # e.send_text('python发送邮件测试', 'python20222')
+    # e.send_file('demo项目测试完成已经完成发送报告请查收', 'demo项目测测试结果',
+    #         'D:\\Users\Mika\\PycharmProjects\\web-ui\output\\report_allure', 'testport')

@@ -9,8 +9,8 @@
 - WEB_UI:
     WEB_BROWSERNAME: "Chrome"                   # "Chrome" "Firefox" "Ie"  "Safari"  # 浏览器选择
     WEB_URL: 'https://www.qoo-app.com/'         # 项目地址 web 时选择
-    WEB_WIMPLICITLY_WAIT_TIME: 10               # 显示等待最长时间 /s
-    WEB_POLL_FREQUENCY: 0.3                     # 显示等待元素出现时 在此时间内检索一次 /s
+    WEB_WIMPLICITLY_WAIT_TIME: 15               # 显示等待最长时间 /s
+    WEB_POLL_FREQUENCY: 0.5                     # 显示等待元素出现时 在此时间内检索一次 /s
     WEB_IS_COLONY: False                        # 是否启动集群模式 True(启用)  False(不启用)
     WEB_HUB_HOST: '192.168.7.101:4444'          # wbs集群hub地址和端口True(启用) 时必填
 
@@ -54,11 +54,11 @@
 ### 报告通知相关配置
 - MSG:
     EMAIL: # 邮件
-      email_host: 'smtp.163.com'
+      email_host: 'smtp.qq.com'
       email_port: '465'
-      send_email_username: 'xxxx@163.com'   # 发送邮件账号
-      send_email_password: 'xxx'           # 发送密码或授权码
-      receive_email_user: [ 'xxx@163.com' ]   # 接收邮件账号
+      send_email_username: '345249887@qq.com'   # 发送邮件账号
+      send_email_password: 'vfmsdnrbrmstbjbc'           # 发送密码或授权码
+      receive_email_user: [ '672442085@qq.com' ]   # 接收邮件账号
 
     WECHAT: #企业微信
       wechat_webhook: ''              # 企业微信群 webhook
@@ -70,12 +70,18 @@
 
 ### 数据库相关配置
 - DB:
+    SSH:
+      host: 'b1.as.qoo-app.com'
+      port: 22
+      user: 'mika'
+      pkey: 'C:/Users/mika/.ssh/id_rsa2.rsa'
+
     MYSQL: #mysql
-      user: 'root'        # 用户
-      password: 'root'    #密码
+      user: 'mika'        # 用户
+      password: '1dd4f96fc104'    #密码
       port: 3306          # 端口
-      host: '127.0.0.1'   # 数据库地址
-      db: 'testdb'        # 数据库
+      host: 'db-develop.qoo-app.app'   # 数据库地址
+      db: 'qoohelper_testing'        # 数据库
 
     ORACLE: #oracle
       user: 'root'        # 用户
@@ -107,4 +113,4 @@
         host: '192.168.7.102'
         port: 7001
 
-    REDIS_CLUSTER_PASWORD: '123456'  # 集群redis密码
+    REDIS_CLUSTER_PASSWORD: '123456'  # 集群redis密码

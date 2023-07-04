@@ -25,8 +25,8 @@
   testdata:
   element:
     - casesteid: 1
-      types: uiautomator
+      types: name
       operate: click
-      locate: new UiSelector().text("登录")
+      locate: 登录
       info: 点击登录按钮
       expect:

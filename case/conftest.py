@@ -3,27 +3,27 @@
 # @Author: Mika
 # @E-mail: yaomian@qoo-app.com
 # @Time: 2020/10/26  20:16
-
 import pytest
+from loguru import logger
 
 from public import WebInit, AppInit
 from public import reda_conf
+
+driver = None
 
 
 @pytest.fixture(scope='function')
 def get_driver():
     CASE_TYPE = reda_conf('CURRENCY').get('CASE_TYPE')
-
     APP_UI = reda_conf('APP_UI')
     IS_EXIT_APPLICATION = APP_UI.get('APP_IS_EXIT_APPLICATION')
     PLATFORM = APP_UI.get('APP_PLATFORM')
     ANDROID_CAPA = APP_UI.get('ANDROID_CAPA')
     IOS_CAPA = APP_UI.get('IOS_CAPA')
-
+    global driver
     if CASE_TYPE.lower() == 'app':
         driver = AppInit().enable
         yield driver
-
         if IS_EXIT_APPLICATION:  # 是否退出应用操作
             if PLATFORM.lower() == 'android':
                 appname = ANDROID_CAPA["appPackage"]
@@ -32,7 +32,9 @@ def get_driver():
             driver.terminate_app(appname)  # 退出应用
         driver.quit()
     else:
-        driver = WebInit().enable
+        if driver is None:
+            driver = WebInit().enable
+        logger.debug(f'driver.__hash__():{driver.__hash__()}')
         yield driver
         driver.quit()
 

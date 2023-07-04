@@ -19,7 +19,6 @@ from public.db import RedisPool
 fake = Factory().create('zh_CN')
 
 
-
 # 读取Excel 数据
 class RedaExcel:
     """
@@ -77,7 +76,7 @@ class RedaExcel:
 class GetCaseYmal:
     """
     步骤数据 locatorYaml
-     获取测试用例 locatorYaml数据类
+    获取测试用例 locatorYaml数据类
     """
 
     def __init__(self, yaml_name: str, case_name: str = None) -> None:
@@ -86,21 +85,21 @@ class GetCaseYmal:
         :param case_name:  用列名称 对应 yaml 用列
         """
         # 读取配置参数
-        IS_REDIS= reda_conf('CURRENCY').get('IS_REDIS')
-        self.isredis = IS_REDIS  # 是否读取reds数据
+        IS_REDIS = reda_conf('CURRENCY').get('IS_REDIS')
+        self.is_redis = IS_REDIS  # 是否读取reds数据
 
         self.yaml_name = yaml_name  # yaml 文件名称 拼接后的路径
 
         if case_name is not None:  # 如果用例名称不为空 可自动识别读取定位数据还是测试数据
-            self.modelname = yaml_name  # 模块名称 对应yaml 文件名
+            self.model_name = yaml_name  # 模块名称 对应yaml 文件名
             self.case_name = case_name  # 用列名称 对应 yaml 用列
 
             if case_name.startswith('test'):
-                self.FLIE_PATH = os.path.join(CASEYMAL_DIR, f"{self.yaml_name}")
+                self.FILE_PATH = os.path.join(CASEYMAL_DIR, f"{self.yaml_name}")
             else:
-                self.FLIE_PATH = os.path.join(LOCATORYMAL_DIR, f"{self.yaml_name}")
+                self.FILE_PATH = os.path.join(LOCATORYMAL_DIR, f"{self.yaml_name}")
         else:  # 没有用例名称 直接返回定位用例yaml路径
-            self.FLIE_PATH = os.path.join(LOCATORYMAL_DIR, f"{self.yaml_name}")
+            self.FILE_PATH = os.path.join(LOCATORYMAL_DIR, f"{self.yaml_name}")
 
     def open_yaml(self):
         """
@@ -108,12 +107,12 @@ class GetCaseYmal:
         :return: dict
         """
         try:
-            with open(self.FLIE_PATH, encoding='utf-8') as f:
+            with open(self.FILE_PATH, encoding='utf-8') as f:
                 data = yaml.load(f, Loader=yaml.FullLoader)
                 f.close()
                 return data
         except UnicodeDecodeError:
-            with open(self.FLIE_PATH, encoding='GBK') as f:
+            with open(self.FILE_PATH, encoding='GBK') as f:
                 data = yaml.load(f, Loader=yaml.FullLoader)
                 f.close()
                 return data
@@ -166,7 +165,7 @@ class GetCaseYmal:
         统计 data  数据条数
         :return:
         """
-        if self.isredis:
+        if self.is_redis:
             return self.redis_data_count()
         return self.count_test_data()
 
@@ -175,7 +174,7 @@ class GetCaseYmal:
         统计 yaml 测试步骤条数
         :return:
         """
-        if self.isredis:
+        if self.is_redis:
             dataList = self.redi_all()
         else:
             dataList = self.get_yaml()
@@ -213,7 +212,7 @@ class GetCaseYmal:
         """
         # 如果读取redis 就从redis获取数据 否则从yaml获取
 
-        if self.isredis:
+        if self.is_redis:
             dataList = self.redi_all()
         else:
             dataList = self.get_yaml()
@@ -233,7 +232,7 @@ class GetCaseYmal:
 
         try:
             re = RedisPool()
-            modellanme = self.modelname.replace('.yaml', '')  # modellanme 模块  redis 不读.yaml 后缀
+            modellanme = self.model_name.replace('.yaml', '')  # modellanme 模块  redis 不读.yaml 后缀
             unpacked_object = pickle.loads(re.session.get(modellanme))
             return unpacked_object
         except TypeError as e:
@@ -297,7 +296,7 @@ class GetCaseYmal:
         :return: str
         """
         # 如果isredis Ture 就读取redis 参数值 否则读取yaml
-        if self.isredis:
+        if self.is_redis:
             return self.redis_param('title')
         return self.get_param('title')
 
@@ -308,7 +307,7 @@ class GetCaseYmal:
         :return: str
         """
         # 如果isredis Ture 就读取redis 参数值 否则读取yaml
-        if self.isredis:
+        if self.is_redis:
             return self.redis_param('precond')
         return self.get_param('precond')
 
@@ -320,7 +319,7 @@ class GetCaseYmal:
         :return: str
         """
         # 如果isredis Ture 就读取redis 参数值 否则读取yaml
-        if self.isredis:
+        if self.is_redis:
             return self.redis_param('reqtype')
         return self.get_param('reqtype')
 
@@ -332,7 +331,7 @@ class GetCaseYmal:
         :return: str
         """
         # 如果isredis Ture 就读取redis 参数值 否则读取yaml
-        if self.isredis:
+        if self.is_redis:
             return self.redis_param('header')
         return self.get_param('header')
 
@@ -344,18 +343,18 @@ class GetCaseYmal:
         :return: str
         """
         # 如果isredis Ture 就读取redis 参数值 否则读取yaml
-        if self.isredis:
+        if self.is_redis:
             return self.redis_param('urlpath')
         return self.get_param('urlpath')
 
-    def test_data_values(self, ):
+    def test_data_values(self, data_name: str = 'testdata'):
         """
         读取yaml  测试数据的 values
         :return:  demo [('u1', 'p1', 'i1'), ('u2', 'p2', 'i2'), ('u3', 'p3', 'i3')]
         """
 
         data_values_list = []
-        if self.isredis:
+        if self.is_redis:
             dataList = self.redi_all()
         else:
             dataList = self.get_yaml()
@@ -363,8 +362,8 @@ class GetCaseYmal:
         for data in dataList:
             # 如果用列等于当前 用列就返回 并且读取的是 yaml 数据
 
-            if data.get('casename') == self.case_name and self.isredis == False:
-                data_list = data.get('testdata')
+            if data.get('casename') == self.case_name and self.is_redis == False:
+                data_list = data.get(data_name)
                 if data_list is not None:
                     for i in data_list:
                         data_values_list.append(tuple(i.values()))
@@ -373,9 +372,9 @@ class GetCaseYmal:
                     logger.info('没有测试数据')
                     continue
 
-            elif data.get('casename') == self.case_name and self.isredis:
+            elif data.get('casename') == self.case_name and self.is_redis:
                 # 读取是redis 时  data.get('data') 是字符串需要转为字典 列表
-                data_list = eval(data.get('testdata'))
+                data_list = eval(data.get(data_name))
                 if data_list is not None:
                     for i in data_list:
                         data_values_list.append(tuple(i.values()))
@@ -392,7 +391,7 @@ class GetCaseYmal:
         :param agrs: 字段的key  因为测试数据是可变的增加的
         :return:
         """
-        if self.isredis:
+        if self.is_redis:
             dataList = self.redi_all()
         else:
             dataList = self.get_yaml()
@@ -402,10 +401,10 @@ class GetCaseYmal:
             for data in dataList:
                 # 如果用列等于当前 用列就返回 并且读取的是 yaml 数据
 
-                if data.get('casename') == self.case_name and self.isredis == False:
+                if data.get('casename') == self.case_name and self.is_redis == False:
                     return data.get('testdata')[index].get(agrs)
 
-                elif data.get('casename') == self.case_name and self.isredis:
+                elif data.get('casename') == self.case_name and self.is_redis:
                     # 读取是redis 时  data.get('data') 是字符串需要转为字典 列表
                     return eval(data.get('testdata'))[index].get(agrs)
 
@@ -416,7 +415,7 @@ class GetCaseYmal:
         返回yanl  testdat 全部数据 列表字段
         :return:
         """
-        if self.isredis:
+        if self.is_redis:
             return self.redi_all().get('testdata')
         return self.get_current_data().get('testdata')
 
@@ -647,11 +646,8 @@ def replace_py_yaml(file):
     return os.path.basename(file).replace('py', 'yaml')
 
 
-
-
-
 # 快速获取测试数据 *元组 WEB、APP
-def reda_pytestdata(yamlname: str, casename: str, ) -> List or Tuple:
+def reda_pytestdata(yamlname: str, casename: str, data_name: str = 'testdata') -> List or Tuple:
     """
     * pytest.mark.parametrize()  *此函数只支持在pytes框架内使用
     * 如果配合run函数调用自己在pytest.mark.parametrize() 传入列表 否则其它方法传入字段名
@@ -661,7 +657,7 @@ def reda_pytestdata(yamlname: str, casename: str, ) -> List or Tuple:
     :return:
     """
     yaml = replace_py_yaml(yamlname)
-    testdata = GetCaseYmal(yaml, casename).test_data_values()
+    testdata = GetCaseYmal(yaml, casename).test_data_values(data_name)
     return testdata
 
 

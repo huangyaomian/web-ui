@@ -4,12 +4,10 @@
 # @E-mail: yaomian@qoo-app.com
 # @Time: 2020/10/26  11:08
 
-import os
-
 import allure
 import pytest
 
-from pageobj.baidu import BaiDu
+from page.baidu import BaiDu
 from public.common import ImgDiff
 from public.reda_data import reda_pytestdata
 

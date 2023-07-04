@@ -7,59 +7,22 @@
 from typing import TypeVar, Tuple, List
 
 import cx_Oracle
-import pymysql
 import redis
 from rediscluster import RedisCluster
 
-from public.common import logger,reda_conf
-
+from public.common import logger, reda_conf
 
 T = TypeVar('T')  # 可以是任何类型。
 
-
 # 读取配置参数
 DB = reda_conf('DB')
+SSH = DB.get('SSH')
 MYSQL = DB.get('MYSQL')
 ORACLE = DB.get('ORACLE')
 REDIS = DB.get('REDIS')
 REDIS_CLUSTER = DB.get('REDIS_CLUSTER')
-REDIS_CLUSTER_PASWORD = DB.get('REDIS_CLUSTER_PASWORD')
+REDIS_CLUSTER_PASSWORD = DB.get('REDIS_CLUSTER_PASSWORD')
 
-
-class Mysql:
-    """
-    mysql 操作类  demo  Mysql.select('SELECT * FROM `case`')
-    """
-
-    @classmethod
-    def connMysql(cls) -> T:
-        """
-        Mysql 连接
-        :return:  str  Mysql连接串
-        """
-        try:
-            conn = pymysql.connect(**MYSQL)
-            return conn
-        except Exception as e:
-            logger.error(f'Mysql客户端连接失败! {e}')
-
-    @classmethod
-    def select(cls, sql: str) -> Tuple or List:
-        """
-        SQL 操作   "select * from  `case`"
-        :param sql:  str sql
-        :return:  tupe
-        """
-        try:
-            conn = cls.connMysql()
-            cur = conn.cursor()
-            cur.execute(sql)
-            select_data = cur.fetchall()
-            cur.close()
-            conn.close()
-            return select_data
-        except Exception as e:
-            logger.error(f'执行Mysql sql错误{e}')
 
 
 class Oracle:
@@ -76,6 +39,7 @@ class Oracle:
         try:
             info = list(ORACLE.values())
             db = cx_Oracle.connect(f'{info[0]}/{info[1]}@{info[2]}')
+            logger.debug('1111')
             return db
         except Exception as e:
             logger.error(f'连接Oracle客户端错误!{e}')
@@ -187,7 +151,7 @@ class RedisPoolCluster:
         :return: object
         """
         try:
-            redisconn = RedisCluster(startup_nodes=REDIS_CLUSTER, password=REDIS_CLUSTER_PASWORD)
+            redisconn = RedisCluster(startup_nodes=REDIS_CLUSTER, password=REDIS_CLUSTER_PASSWORD)
             return redisconn
         except Exception as e:
             logger.error(f"错误,连接redis 集群失败 {e}")

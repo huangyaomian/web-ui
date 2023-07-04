@@ -339,7 +339,7 @@ class App(AppBase):
 
         if operate is None:
             el = index  # 如果index 为空默认多个
-            return self.driver_element(types=types, locate=locate, el=el)
+            return self.driver_element(types=types, locate=locate, is_els=el)
 
         else:
             if operate == 'input':  # 输入操作

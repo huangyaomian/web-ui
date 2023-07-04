@@ -16,7 +16,7 @@ from public import Web
 
 '''
 
-pageobj  对应 locatorYAML 操作页面
+page  对应 locatorYAML 操作页面
 '''
 
 
@@ -28,7 +28,7 @@ class WangYi(Web):
         跳转iffrom
         :return:
         """
-        self.webexe(__file__, sys._getframe().f_code.co_name)
+        self.web_exe(__file__, sys._getframe().f_code.co_name)
 
     def input_user(self,user):
         """
@@ -36,19 +36,19 @@ class WangYi(Web):
         :return:
         """
 
-        self.webexe(__file__, sys._getframe().f_code.co_name,text=user)
+        self.web_exe(__file__, sys._getframe().f_code.co_name, text=user)
 
     def input_pwd(self,pwd):
         """
         输入密码
         :return:
         """
-        self.webexe(__file__, sys._getframe().f_code.co_name,text=pwd)
+        self.web_exe(__file__, sys._getframe().f_code.co_name, text=pwd)
 
     def input_sub(self):
         """
         提交登录
         :return:
         """
-        self.webexe(__file__, sys._getframe().f_code.co_name)
+        self.web_exe(__file__, sys._getframe().f_code.co_name)
 

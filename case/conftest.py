@@ -9,8 +9,6 @@ from loguru import logger
 from public import WebInit, AppInit
 from public import reda_conf
 
-driver = None
-
 
 @pytest.fixture(scope='function')
 def get_driver():
@@ -20,7 +18,6 @@ def get_driver():
     PLATFORM = APP_UI.get('APP_PLATFORM')
     ANDROID_CAPA = APP_UI.get('ANDROID_CAPA')
     IOS_CAPA = APP_UI.get('IOS_CAPA')
-    global driver
     if CASE_TYPE.lower() == 'app':
         driver = AppInit().enable
         yield driver
@@ -32,8 +29,7 @@ def get_driver():
             driver.terminate_app(appname)  # 退出应用
         driver.quit()
     else:
-        if driver is None:
-            driver = WebInit().enable
+        driver = WebInit().enable
         logger.debug(f'driver.__hash__():{driver.__hash__()}')
         yield driver
         driver.quit()

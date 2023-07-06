@@ -29,7 +29,6 @@ class TestNewLogin:
         qoo_login_page.email_login(email=email, pwd=pwd)
         assert True
 
-    # @allure.story("登錄驗證")  # 模块说明
     @allure.title("驗證正確郵箱格式")  # 用例标题
     @allure.description('驗證正確郵箱格式')  # 用例描述
     @pytest.mark.test_new_login_web  # 用列标记
@@ -40,7 +39,6 @@ class TestNewLogin:
         qoo_login_page.input_email(email=email)
         assert not qoo_login_page.is_email_format_error_tip()
 
-    # @allure.story("登錄驗證")  # 模块说明
     @allure.title("驗證錯誤郵箱格式")  # 用例标题
     @allure.description('驗證錯誤郵箱格式')  # 用例描述
     @pytest.mark.test_new_login_web  # 用列标记
@@ -51,7 +49,6 @@ class TestNewLogin:
         qoo_login_page.input_email(email=email)
         assert my_find(qoo_login_page.get_email_format_error_tip(), tip)
 
-    # @allure.story("登錄驗證")  # 模块说明
     @allure.title("忘記密碼")  # 用例标题
     @allure.description('忘記密碼')  # 用例描述
     @pytest.mark.test_new_login_web  # 用列标记

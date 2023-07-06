@@ -8,7 +8,7 @@ import allure
 import pytest
 
 from page.qoo_search import QooSearch
-from public.reda_data import reda_pytestdata
+from public.reda_data import reda_pytest_data
 
 
 # 修改 setting  URL
@@ -19,7 +19,7 @@ class TestQooSearch:
     @allure.title("输入内容并搜索")  # 用例标题
     @allure.description('输入多参数搜索')  # 用例描述
     @pytest.mark.test_qoo_search_web  # 用列标记
-    @pytest.mark.parametrize('content', reda_pytestdata(__file__, 'test_qoo_search'))  # 测试数据
+    @pytest.mark.parametrize('content', reda_pytest_data(__file__, 'test_qoo_search'))  # 测试数据
     def test_qoo_search(self, get_driver, content):
         text = QooSearch(get_driver).search_game(content)
         assert content.__eq__(text)

@@ -10,7 +10,7 @@ import allure
 import pytest
 
 from page.wy163 import WangYi
-from public import reda_pytestdata
+from public import reda_pytest_data
 
 
 
@@ -22,7 +22,7 @@ class TestWangYi:
     @allure.title("测试iffrom")  # 用例标题
     @allure.description('测试iffrom')  # 用例描述
     @pytest.mark.testwy_web  # 用列标记
-    @pytest.mark.parametrize('user,pwd', reda_pytestdata(__file__, 'test_wy63_go'))  # 测试数据
+    @pytest.mark.parametrize('user,pwd', reda_pytest_data(__file__, 'test_wy63_go'))  # 测试数据
     def test_wy63_go(self, get_driver, user, pwd):
         wy = WangYi(get_driver)
 

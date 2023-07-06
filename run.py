@@ -204,9 +204,9 @@ class RunPytest:
         DelReport().run_del_report()
 
         # pytest.main(
-        #     ['-m', 'test_qoo_search_web', '--reruns=2','-n=1', '-s', '--alluredir', PRPORE_JSON_DIR, CASE_DIR])
+        #     ['-m', 'test_qoo_search_web or', '--reruns=2','-n=1', '-s', '--alluredir', PRPORE_JSON_DIR, CASE_DIR])
         pytest.main(
-            ['-m', 'test_qoo_search_web or test_qoo_login_web', '--reruns=2', '-n=1', '-s', '--alluredir',
+            ['-m', 'test_new_login_web', '--reruns=0', '-n=1', '-s', '--alluredir',
              PRPORE_JSON_DIR, CASE_DIR])
 
         # 生成测试报告

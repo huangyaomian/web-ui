@@ -8,7 +8,7 @@
 #### WEB  ui相关配置
 - WEB_UI:
     WEB_BROWSERNAME: "Chrome"                   # "Chrome" "Firefox" "Ie"  "Safari"  # 浏览器选择
-    WEB_URL: 'https://www.qoo-app.com/'         # 项目地址 web 时选择
+    WEB_URL: 'https://beta-m-apps.qoo-app.com/testing'         # 项目地址 web 时选择
     WEB_WIMPLICITLY_WAIT_TIME: 15               # 显示等待最长时间 /s
     WEB_POLL_FREQUENCY: 0.5                     # 显示等待元素出现时 在此时间内检索一次 /s
     WEB_IS_COLONY: False                        # 是否启动集群模式 True(启用)  False(不启用)

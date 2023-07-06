@@ -365,8 +365,8 @@ class GetCaseYmal:
             if data.get('casename') == self.case_name and self.is_redis == False:
                 data_list = data.get(data_name)
                 if data_list is not None:
-                    for i in data_list:
-                        data_values_list.append(tuple(i.values()))
+                    for item in data_list:
+                        data_values_list.append(tuple(item.values()))
                     return data_values_list
                 else:
                     logger.info('没有测试数据')
@@ -647,28 +647,26 @@ def replace_py_yaml(file):
 
 
 # 快速获取测试数据 *元组 WEB、APP
-def reda_pytestdata(yamlname: str, casename: str, data_name: str = 'testdata') -> List or Tuple:
+def reda_pytest_data(yaml_name: str, case_name: str) -> List or Tuple:
     """
     * pytest.mark.parametrize()  *此函数只支持在pytes框架内使用
     * 如果配合run函数调用自己在pytest.mark.parametrize() 传入列表 否则其它方法传入字段名
     快速获取测试数据 *元组
-    :param yamlname: yaml 名称
-    :param casename:   用例数据
+    :param yaml_name: yaml 名称
+    :param case_name:   用例数据
     :return:
     """
-    yaml = replace_py_yaml(yamlname)
-    testdata = GetCaseYmal(yaml, casename).test_data_values(data_name)
-    return testdata
+    return GetCaseYmal(replace_py_yaml(yaml_name), case_name).test_data_values('testdata')
 
 
 #  快速获取测试数据 *字典 API
-def reda_api_casedata(yamlname: str, casename: str) -> List or Tuple:
+def reda_api_case_data(yaml_name: str, case_name: str) -> List or Tuple:
     """
     读取测试数据 HTTP 专用  *字典
     :return:
     """
-    yaml = replace_py_yaml(yamlname)
-    testdata = GetCaseYmal(yaml, casename)
+    yaml = replace_py_yaml(yaml_name)
+    testdata = GetCaseYmal(yaml, case_name)
 
     return testdata.test_data()
 

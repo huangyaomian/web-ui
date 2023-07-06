@@ -6,10 +6,9 @@
 
 import os
 import sys
-import threading
 import time
 from enum import Enum
-from typing import TypeVar, Optional
+from typing import TypeVar, Optional, List
 
 import allure
 from appium.webdriver.common.appiumby import AppiumBy
@@ -18,6 +17,7 @@ from selenium.common import TimeoutException
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.select import Select
 from selenium.webdriver.support.ui import WebDriverWait
@@ -25,6 +25,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from config import PRPORE_SCREEN_DIR
 from public.common import ErrorExcep, is_assertion, reda_conf
 from public.reda_data import GetCaseYmal, replace_py_yaml
+from utils.yaml_util import get_element_by
 
 EM = TypeVar('EM')  # 可以是任何类型。
 
@@ -680,6 +681,29 @@ class Base:
             logger.error(e)
             return False
 
+    def is_visibility_of_element_located(self, el_key: any, timeout: float = IMPLICITLY_WAIT_TIME) -> bool:
+        """
+        检查特定元素是否存在于DOM树中并可见
+        :param el_key: 定位
+        :param timeout: 秒
+        :return:
+        """
+        el_locator = get_element_by(el_key)
+        locator_type, locator_value = el_locator
+
+        wait = WebDriverWait(self.driver, timeout,
+                             poll_frequency=POLL_FREQUENCY)
+        try:
+            em = wait.until(EC.visibility_of_element_located((locator_type, locator_value)))
+            if em:
+                return True
+            else:
+                return False
+
+        except Exception as e:
+            logger.error(e)
+            return False
+
     def web_element_to_be_clickable(self, types: str, locate: str, ) -> bool or EM:
         """
         检查特定元素是否可点击，如果可以则返回该元素，否则返回False
@@ -805,6 +829,63 @@ class Base:
         except TimeoutException:
             raise TimeoutException("在固定時間內未找到元素，請檢查代碼！")
 
+    def my_find_element(self, el_key: str) -> WebElement:
+        """
+        返回 element
+        :param el_key: 定位
+        :return: element 对象
+        """
+        el_locator = get_element_by(el_key)
+        locator_type, locator_value = el_locator
+        try:
+            with allure.step(f'执行操作：查找元素，定位key:{el_key}'):
+                return WebDriverWait(self.driver, timeout=IMPLICITLY_WAIT_TIME,
+                                     poll_frequency=POLL_FREQUENCY).until(
+                    EC.visibility_of_element_located((locator_type, locator_value)))
+
+        except TimeoutException:
+            raise TimeoutException("在固定時間內未找到元素，請檢查代碼！")
+
+    def my_find_elements(self, el_key: str) -> List[WebElement]:
+        """
+        返回 element
+        :param el_key: 定位
+        :return: element 对象
+        """
+        el_locator = get_element_by(el_key)
+        locator_type, locator_value = el_locator
+        try:
+            return WebDriverWait(self.driver, timeout=IMPLICITLY_WAIT_TIME,
+                                 poll_frequency=POLL_FREQUENCY).until(
+                EC.visibility_of_all_elements_located((locator_type, locator_value)))
+
+        except TimeoutException:
+            raise TimeoutException("在固定時間內未找到元素，請檢查代碼！")
+
+    def my_click(self, el_key: any) -> None:
+        """
+        點擊
+        :param el_key: 定位
+        :return: None
+        """
+        with allure.step(f'执行操作：点击，定位key:{el_key}'):
+            if isinstance(el_key, str):
+                self.my_find_element(el_key).click()
+            elif isinstance(el_key, WebElement):
+                el_key.click()
+
+    def my_send_keys(self, el_key: any, value: str) -> None:
+        """
+        輸入
+        :param el_key: 定位
+        :return: None
+        """
+        with allure.step(f'执行操作：sendkeys，定位类型:{el_key}，send_texts：{value}'):
+            if isinstance(el_key, str):
+                self.my_find_element(el_key).send_keys(value)
+            elif isinstance(el_key, WebElement):
+                el_key.send_keys(value)
+
     def web_submit(self, types: str, locate: str, index: int = None) -> None:
         """
         获取元素后  提交 * 前提是input元素的type为submit
@@ -923,6 +1004,21 @@ class Base:
         else:
             # 单个定位提取文本元素必须是唯一 如果多个时默认返回第一个
             return self.driver_element(types=types, locate=locate).text
+
+    def my_get_text(self, el_key: any) -> None or str:
+        """
+        获取元素  提取文本内容
+        :param el_key: 定位
+        :return: None or str
+
+        """
+        text = None
+        with allure.step(f'执行操作：get_text，定位key:{el_key}，text_value：{text}'):
+            if isinstance(el_key, str):
+                text = self.my_find_element(el_key).text
+            elif isinstance(el_key, WebElement):
+                text = el_key.text
+        return text
 
     def often_click(self, types: str, locate: str, index: int = None) -> None:
         """
@@ -1123,6 +1219,53 @@ class Web(Base):
                 self.sleep(wait)
                 logger.debug(notes)
                 return self.web_html_content
+
+    def web_exe(self, yaml_file, case, text=None, wait=0.01) -> any:
+        """
+        自动执行定位步骤
+        :param yaml_file:  yaml文件
+        :param case: yaml定位用例
+        :param text:  输入内容
+        :param wait:  等待多少
+        :return:
+        """
+        result = None  # 断言结果  最后一步才返回
+        yaml = replace_py_yaml(yaml_file)
+        locator_data = self.get_case(yaml, case)
+        locator_step = locator_data.stepCount()
+
+        for locator in range(locator_step):
+            waits = locator_data.locawait(locator)
+
+            if locator_data.operate(locator) in ('input', 'clear_continue_input', 'jsclear_continue_input'):
+                with allure.step(
+                        f'定位类型:{locator_data.types(locator)}，定位元素：{locator_data.locate(locator)}，操作：{locator_data.operate(locator)}，文本：{text}，操作说明：{locator_data.info(locator)}'):
+                    self.web_judge_execution(types=locator_data.types(locator),
+                                             locate=locator_data.locate(locator),
+                                             operate=locator_data.operate(locator),
+                                             notes=locator_data.info(locator),
+                                             text=text,
+                                             index=locator_data.listindex(locator))
+            elif 'element'.__eq__(locator_data.operate(locator)):
+                with allure.step(
+                        f'定位类型:{locator_data.types(locator)}，定位元素：{locator_data.locate(locator)}，操作：{locator_data.operate(locator)}，操作说明：{locator_data.info(locator)}'):
+                    result = self.driver_element(types=locator_data.types(locator),
+                                                 locate=locator_data.locate(locator), )
+            else:
+                with allure.step(
+                        f'定位类型:{locator_data.types(locator)}，定位元素：{locator_data.locate(locator)}，操作：{locator_data.operate(locator)}，操作说明：{locator_data.info(locator)}'):
+                    result = self.web_judge_execution(types=locator_data.types(locator),
+                                                      locate=locator_data.locate(locator),
+                                                      operate=locator_data.operate(locator),
+                                                      notes=locator_data.info(locator),
+                                                      index=locator_data.listindex(locator))
+        # 等待时间 如果yaml没有就使用默认
+        if waits is not None:
+            wait = waits
+
+        self.sleep(wait)
+
+        return result
 
     def web_exe(self, yaml_file, case, text=None, wait=0.01) -> any:
         """

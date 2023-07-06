@@ -1,0 +1,49 @@
+- model: TestNewLogin  # 对应case的类名称
+
+- casename: test_qoo_email_login     # 对应类的 函数
+  title: 输入搜索内容            # 操作标题
+  precond: 前置说明       # 前置说明
+  testdata: # 测试数据 /列表
+    - email: yaomian@qoo-app.com
+      pwd: a12345678
+    - email: yaomian11@qoo-app.com
+      pwd: a12345678
+
+- casename: test_check_email_format_correct     # 对应类的 函数
+  title: 输入搜索内容            # 操作标题
+  precond: 前置说明       # 前置说明
+  testdata: # 测试数据 /列表
+    - email: example@example.com
+    - email: user123@gmail.com
+    - email: user_name123@example.com
+    - email: john.doe+test@example.com
+    - email: 用户名@example.com
+    - email: δοκιμή@παράδειγμα.δοκιμή
+    - email: 1@1.com
+
+- casename: test_check_email_format_error_case     # 对应类的 函数
+  title: 输入搜索内容            # 操作标题
+  precond: 前置说明       # 前置说明
+  testdata: # 测试数据 /列表
+    - email: example@com
+      tip: 格式错误
+    - email: user123
+      tip: 格式错误
+    - email: ujohn.doe@example
+      tip: 格式错误
+    - email: user name@example.com
+      tip: 格式错误
+    - email: john.doe@example.com; user@example.com
+      tip: 格式错误
+    - email: test@example.com, example@example.com
+      tip: 格式错误
+    - email: 1@1.c
+      tip: 格式错误
+
+
+- casename: test_forget_pwd     # 对应类的 函数
+  title: 输入搜索内容            # 操作标题
+  precond: 前置说明       # 前置说明
+  testdata: # 测试数据 /列表
+    - email: 672442085@qq.com
+    - email: 345249887@qq.com

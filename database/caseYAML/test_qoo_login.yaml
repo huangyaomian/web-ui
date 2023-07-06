@@ -4,13 +4,10 @@
   title: 输入搜索内容            # 操作标题
   precond: 前置说明       # 前置说明
   testdata: # 测试数据 /列表
-    - email: mika
-#    - discord_email: lucy
-#    - discord_pwd: 123
-#    - content: go
-#    - content: shell
-#    - content: c#
-    - pwd: 12345678
+    - email: yaomian@qoo-app.com
+    - pwd: a12345678
   testdata2: # 测试数据 /列表
     - discord_email: 672442085@qq.com
     - discord_pwd: huangyaomian1234
+  forget_pwd_email: # 测试数据 /列表
+    - email: 672442085@qq.com

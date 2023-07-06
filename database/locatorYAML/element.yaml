@@ -1,0 +1,34 @@
+#登錄彈窗
+input_text:
+  type: xpath
+  locate: //input[@class='qoo-input' and @type='text']
+input_pwd:
+  type: xpath
+  locate: //input[@class='qoo-input' and @type='password']
+protocol_checkbox:
+  type: xpath
+  locate: //span[@class='qoo-checkbox']
+login_btn:
+  type: xpath
+  locate: //button[contains(@class,'login')]/span[text()='登入']
+forget_pwd_btn:
+  type: xpath
+  locate: //button[contains(@class,'find-password-entr')]
+get_code_btn:
+  type: xpath
+  locate: //button[contains(@class,'qoo-button')]/span[text()='發送驗證碼']
+next_step_btn:
+  type: xpath
+  locate: //button[contains(@class,'qoo-button')]/span[text()='下一步']
+email_error_tip:
+  type: xpath
+  locate: //div[@class='qoo-form__item__explain']/span
+goto_register:
+  type: xpath
+  locate: //button[@class='qoo-button login-layer__button login-layer__button--link login-layer__button--small']
+fb_register_icon:
+  type: xpath
+  locate: //div[@class='login-layer__register__wrapper']//span[@aria-label='Facebook']
+google_register_icon:
+  type: xpath
+  locate: //div[@class='login-layer__register__wrapper']//span[@aria-label='Google']

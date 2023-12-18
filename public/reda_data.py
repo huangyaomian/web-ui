@@ -6,17 +6,22 @@
 
 import os
 import pickle
+import random
+import string
 from typing import List, Tuple
 
 import yaml
-from faker import Factory
+from faker import Factory, Faker
+from faker.providers import person, misc
 from xlrd import open_workbook
 
 from config import CASEYMAL_DIR, LOCATORYMAL_DIR
 from public.common import ErrorExcep, logger, reda_conf
-from public.db import RedisPool
 
-fake = Factory().create('zh_CN')
+# fake = Factory().create('zh_CN')
+from utils.redis_util import RedisPool
+
+fake = Faker('zh_CN')
 
 
 # 读取Excel 数据
@@ -116,7 +121,7 @@ class GetCaseYmal:
                 data = yaml.load(f, Loader=yaml.FullLoader)
                 f.close()
                 return data
-        except  Exception:
+        except Exception:
             logger.error('Error opening ymal file')
 
     def get_yaml(self):
@@ -353,7 +358,7 @@ class GetCaseYmal:
         :return:  demo [('u1', 'p1', 'i1'), ('u2', 'p2', 'i2'), ('u3', 'p3', 'i3')]
         """
 
-        data_values_list = []
+        # data_values_list = []
         if self.is_redis:
             dataList = self.redi_all()
         else:
@@ -366,8 +371,12 @@ class GetCaseYmal:
                 data_list = data.get(data_name)
                 if data_list is not None:
                     for item in data_list:
-                        data_values_list.append(tuple(item.values()))
-                    return data_values_list
+                        if len(item) == 1:
+                            yield " ".join(item.values())  # 返回字符串
+                        else:
+                            yield tuple(item.values())  # 返回元组
+                    #     data_values_list.append(tuple(item.values()))
+                    # return data_values_list
                 else:
                     logger.info('没有测试数据')
                     continue
@@ -376,9 +385,10 @@ class GetCaseYmal:
                 # 读取是redis 时  data.get('data') 是字符串需要转为字典 列表
                 data_list = eval(data.get(data_name))
                 if data_list is not None:
-                    for i in data_list:
-                        data_values_list.append(tuple(i.values()))
-                    return data_values_list
+                    for item in data_list:
+                        yield tuple(item.values())
+                    #     data_values_list.append(tuple(i.values()))
+                    # return data_values_list
                 else:
                     logger.info('没有测试数据')
                     continue
@@ -496,7 +506,7 @@ class RandomData:
     def random_name(self):
         """
         随机姓名
-        :return: str
+        :return: strr
         """
         return fake.name()
 
@@ -586,7 +596,7 @@ class RandomData:
         随机月份
         :return: str[0] -数字月  str[0] -英文月
         """
-        return (fake.month(), fake.month_name())
+        return fake.month(), fake.month_name()
 
     @property
     def random_month(self):
@@ -636,6 +646,20 @@ class RandomData:
         """
         return fake.date_of_birth(tzinfo=None, minimum_age=0, maximum_age=age)
 
+    def generate_random_alphanumeric(self, length: int) -> str:
+        """
+        隨機字符 數字+字母
+        :param length:  int 長度
+        :return:  str
+        """
+        faker = Faker()
+        faker.add_provider(person)
+        faker.add_provider(misc)
+
+        characters = string.ascii_letters + string.digits
+        random_alphanumeric = ''.join(random.choice(characters) for _ in range(length))
+        return random_alphanumeric
+
 
 def replace_py_yaml(file):
     """
@@ -677,4 +701,6 @@ if __name__ == '__main__':
     # print(reda_seting_yaml()[0].get('CURRENCY').get('IS_CLEAN_REPORT'))
     # print(reda_seting_yaml())
 
-    print(reda_conf('CURRENCY').get('IS_CLEAN_REPORT'))
+    # print(reda_conf('CURRENCY').get('IS_CLEAN_REPORT'))
+    print(RandomData().generate_random_alphanumeric(10))
+    print(RandomData().random_date_of_birth(10))

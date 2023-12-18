@@ -1,12 +1,13 @@
 import json
 from datetime import datetime
-from typing import Union
+from typing import Union, Optional
 
-from public.common import logger, reda_conf
+from loguru import logger
+
+from public.common import reda_conf
 import pymysql
 import pymysql.cursors
 from sshtunnel import SSHTunnelForwarder
-
 
 # 读取配置参数
 DB = reda_conf('DB')
@@ -155,11 +156,24 @@ class MysqlServer:
             for k, v in result.items():
                 if isinstance(v, datetime):
                     result[k] = str(v)
+        logger.debug(f'db 結果：{result}')
         return result
 
 
-if __name__ == '__main__':
-    ssh = True
-    db = MysqlServer(MYSQL['host'], MYSQL['port'], MYSQL['user'], MYSQL['password'], MYSQL['db'], ssh,
+def db_get_email() -> Union[list, None]:
+    db = MysqlServer(MYSQL['host'], MYSQL['port'], MYSQL['user'], MYSQL['password'], MYSQL['id_db'], True,
                      **SSH)
-    logger.debug(db.query_one(sql="select * from user limit 2;"))
+    return db.query_all(sql="select email from user_auth_info where  email is not null and email != '' and email like "
+                            "'%qq.com' limit 10;")
+
+
+def db_get_email_one() -> Union[dict, None]:
+    db = MysqlServer(MYSQL['host'], MYSQL['port'], MYSQL['user'], MYSQL['password'], MYSQL['id_db'], True,
+                     **SSH)
+    return db.query_one(sql="select email from user_auth_info where  email is not null and email != '' limit 1;")
+
+
+if __name__ == '__main__':
+    # logger.debug(type(db_get_email()))
+    db_get_email()
+    db_get_email_one()

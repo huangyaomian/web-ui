@@ -1,3 +1,9 @@
+login_test_btn:
+  type: xpath
+  locate: //button[@class='qoo-button login-layer__button login-layer__button--solid']
+login_test_name:
+  type: xpath
+  locate: //button[@class='qoo-button login-layer__button login-layer__button--solid']/preceding-sibling::span
 #登錄彈窗
 input_text:
   type: xpath
@@ -14,12 +20,24 @@ login_btn:
 forget_pwd_btn:
   type: xpath
   locate: //button[contains(@class,'find-password-entr')]
+forget_pwd_email_input:
+  type: xpath
+  locate: //div[@class='login-layer__bind-email']/form/div[@class='qoo-form__item ']//input
+forget_pwd_code_input:
+  type: xpath
+  locate: //div[@class='login-layer__bind-email']/form/div[@class='login-layer__veri-code']//input
 get_code_btn:
   type: xpath
   locate: //button[contains(@class,'qoo-button')]/span[text()='發送驗證碼']
 next_step_btn:
   type: xpath
   locate: //button[contains(@class,'qoo-button')]/span[text()='下一步']
+reset_pwd_input:
+  type: xpath
+  locate: //div[@class='login-layer__reset-password']//input
+reset_pwd_confirm:
+  type: xpath
+  locate: //button[@class='qoo-button login-layer__button login-layer__button--solid login-layer__button--large']
 email_error_tip:
   type: xpath
   locate: //div[@class='qoo-form__item__explain']/span
@@ -32,3 +50,53 @@ fb_register_icon:
 google_register_icon:
   type: xpath
   locate: //div[@class='login-layer__register__wrapper']//span[@aria-label='Google']
+fb_login_icon:
+  type: xpath
+  locate: //span[@aria-label='login.facebook']
+google_login_icon:
+  type: xpath
+  locate: //section[@class='login-layer__body']//span[@aria-label='login.google']
+allow_protocol_tip:
+  type: xpath
+  locate: //div[contains(@class,'qoo-toast')]
+back_btn:
+  type: xpath
+  locate: //i[@class='qoofont qoo-return']
+many_code_tip:
+  type: xpath
+  locate: //div[@class='qoo-form__item__explain']
+terms_btn:
+  type: xpath
+  locate:  //a[contains(@href,'website/terms')]
+privacy_btn:
+  type: xpath
+  locate:  //a[contains(@href,'website/privacy')]
+#滑動驗證碼彈窗
+captcha_slider:
+  type: xpath
+  locate: //div[@class='captcha-slider ']
+
+#fb登錄相關
+fb_email_input:
+  type: xpath
+  locate: //input[@id='email']
+fb_pwd_input:
+  type: xpath
+  locate: //input[@id='pass']
+fb_login_btn:
+  type: xpath
+  locate: //button[@id='loginbutton']
+
+#gp登錄相關
+gp_email_input:
+  type: xpath
+  locate: //input[@id='identifierId']
+gp_next:
+  type: xpath
+  locate: //button[@jsname='LgbsSe']
+gp_pwd_input:
+  type: xpath
+  locate: //input[@id='pass']
+fb_login_btn:
+  type: xpath
+  locate: //button[@id='loginbutton']

@@ -3,7 +3,7 @@
 # @Author: Mika
 # @E-mail: yaomian@qoo-app.com
 # @Time: 2021/2/1  16:11
-
+import io
 import os
 import re
 import shutil
@@ -150,8 +150,6 @@ class SetLog:
     """
     日志设置类  使用 logger 请从此logs目录导入
     """
-    logger.info(f"hashcode：{logger.__hash__()}")
-    logger.info(f"ident：{threading.current_thread().ident}")
     logger.remove()  # 删去import logger之后自动产生的handler，不删除的话会出现重复输出的现象
     DAY = time.strftime("%Y-%m-%d", time.localtime(time.time()))
     LOG_PATH = os.path.join(LOG_DIR, f'{DAY}_all.log')
@@ -159,7 +157,8 @@ class SetLog:
     logger.add(LOG_PATH, rotation="00:00", encoding='utf-8')
     logger.add(ERR_LOG_PATH, rotation="00:00", encoding='utf-8', level='ERROR')
     # logger.remove()  # 删去import logger之后自动产生的handler，不删除的话会出现重复输出的现象
-    handler_id = logger.add(sys.stderr, level=levels)  # 添加一个可以修改控制的handler
+    wrapped_stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+    handler_id = logger.add(wrapped_stderr, level=levels)  # 添加一个可以修改控制的handler
 
 
 # 删除测试报告

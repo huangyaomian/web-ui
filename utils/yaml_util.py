@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import yaml
 from selenium.webdriver.common.by import By
 

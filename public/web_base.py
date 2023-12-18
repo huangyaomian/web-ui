@@ -704,6 +704,14 @@ class Base:
             logger.error(e)
             return False
 
+    def my_is_enabled(self, el_key: any) -> bool:
+        """
+        检查特定元素是否存enabled
+        :param el_key: 定位
+        :return:
+        """
+        return self.my_find_element(el_key).is_enabled()
+
     def web_element_to_be_clickable(self, types: str, locate: str, ) -> bool or EM:
         """
         检查特定元素是否可点击，如果可以则返回该元素，否则返回False
@@ -839,6 +847,7 @@ class Base:
         locator_type, locator_value = el_locator
         try:
             with allure.step(f'执行操作：查找元素，定位key:{el_key}'):
+                logger.debug(f'执行操作：查找元素，定位key:{el_key}')
                 return WebDriverWait(self.driver, timeout=IMPLICITLY_WAIT_TIME,
                                      poll_frequency=POLL_FREQUENCY).until(
                     EC.visibility_of_element_located((locator_type, locator_value)))
@@ -869,6 +878,7 @@ class Base:
         :return: None
         """
         with allure.step(f'执行操作：点击，定位key:{el_key}'):
+            logger.debug(f'执行操作：点击，定位key:{el_key}')
             if isinstance(el_key, str):
                 self.my_find_element(el_key).click()
             elif isinstance(el_key, WebElement):
@@ -881,6 +891,7 @@ class Base:
         :return: None
         """
         with allure.step(f'执行操作：sendkeys，定位类型:{el_key}，send_texts：{value}'):
+            logger.debug(f'执行操作：sendkeys，定位类型:{el_key}，send_texts：{value}')
             if isinstance(el_key, str):
                 self.my_find_element(el_key).send_keys(value)
             elif isinstance(el_key, WebElement):
@@ -1014,6 +1025,7 @@ class Base:
         """
         text = None
         with allure.step(f'执行操作：get_text，定位key:{el_key}，text_value：{text}'):
+            logger.debug(f'执行操作：get_text，定位key:{el_key}，text_value：{text}')
             if isinstance(el_key, str):
                 text = self.my_find_element(el_key).text
             elif isinstance(el_key, WebElement):

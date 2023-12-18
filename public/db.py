@@ -84,56 +84,7 @@ class Oracle:
             logger.error(f'执行Oracle 插入异常{e}')
 
 
-class RedisPool:
-    """
-    redis 操作类    demo  re = RedisPool()  re.set('han','2019')  re.get('han')
 
-    """
-    __Pool = None
-
-    def __init__(self):
-        self.session = self.redis_conn()
-
-    def redis_conn(self) -> T:
-        """
-        连接redis 操作
-        :return:
-        """
-        try:
-            if not RedisPool.__Pool:
-                RedisPool.__Pool = redis.ConnectionPool(host=REDIS.get('host'), port=REDIS.get('port'),
-                                                        password=REDIS.get('password'), db=REDIS.get('db'))
-
-            session = redis.StrictRedis(connection_pool=RedisPool.__Pool)
-            return session
-        except Exception as e:
-            logger.error(f'连接错误！{e}')
-
-    def set(self, key: str, value: str) -> T:
-        """
-        redis  set 操作
-        :param key: 键
-        :param value: 值
-        :return:
-        """
-        ret = self.session.set(key, value)
-        self.session.close()
-        return ret
-
-    def get(self, key: str) -> T:
-        """
-        redis get 操作
-        :param key: 键
-        :return:
-        """
-        vlaue = self.session.get(key)
-
-        self.session.close()
-        if vlaue != None:
-            return vlaue
-        else:
-            logger.error('无此key')
-            return None
 
 
 class RedisPoolCluster:

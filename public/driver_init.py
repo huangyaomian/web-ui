@@ -7,6 +7,7 @@ import sys
 from typing import TypeVar
 
 from selenium.common.exceptions import SessionNotCreatedException
+from selenium_stealth import stealth
 
 sys.path.append('../')
 import os, time
@@ -269,9 +270,27 @@ class WebInit:
                         return self.browser_setup_args(driver)
 
                     if self.browser == 'chrome':
-                        option = self.linux_chrome_args
+                        # option = self.linux_chrome_args
                         # driver = webdriver.Chrome(executable_path=WIN_CHROMEDRIVER, options=option)
-                        driver = webdriver.Chrome(executable_path=WIN_CHROMEDRIVER)
+                        options = webdriver.ChromeOptions()
+                        options.add_argument(
+                            "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, "
+                            "like Gecko) "
+                            "Chrome/90.0.4430.212 Safari/537.36")
+                        options.add_argument('--ignore-certificate-errors')
+                        options.add_experimental_option("excludeSwitches", ["enable-automation"])
+                        options.add_experimental_option('useAutomationExtension', False)
+                        options.add_argument('--disable-blink-features=AutomationControlled')
+                        driver = webdriver.Chrome(executable_path=WIN_CHROMEDRIVER, options=options)
+                        stealth(driver,
+                                languages=["en-US", "en"],
+                                vendor="Google Inc.",
+                                platform="Win32",
+                                webgl_vendor="Intel Inc.",
+                                renderer="Intel Iris OpenGL Engine",
+                                fix_hairline=True,
+                                )
+                        # driver = webdriver.Chrome(executable_path=WIN_CHROMEDRIVER)
                         return self.browser_setup_args(driver)
 
                     elif self.browser == 'firefox':

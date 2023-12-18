@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 import allure
-from loguru import logger
 
 
 def my_find(main_str: str, sub_str: str) -> bool:

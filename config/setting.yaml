@@ -8,7 +8,7 @@
 #### WEB  ui相关配置
 - WEB_UI:
     WEB_BROWSERNAME: "Chrome"                   # "Chrome" "Firefox" "Ie"  "Safari"  # 浏览器选择
-    WEB_URL: 'https://apps.qoo-app.com/'         # 项目地址 web 时选择
+    WEB_URL: 'https://testing-m-user.qoo-app.com/testing'         # 项目地址 web 时选择
     WEB_WIMPLICITLY_WAIT_TIME: 15               # 显示等待最长时间 /s
     WEB_POLL_FREQUENCY: 0.5                     # 显示等待元素出现时 在此时间内检索一次 /s
     WEB_IS_COLONY: False                        # 是否启动集群模式 True(启用)  False(不启用)
@@ -81,7 +81,8 @@
       password: '1dd4f96fc104'    #密码
       port: 3306          # 端口
       host: 'db-develop.qoo-app.app'   # 数据库地址
-      db: 'qoohelper_testing'        # 数据库
+      qoohelper_db: 'qoohelper_testing'        # 数据库
+      id_db: 'qooapp_id_testing'        # 数据库
 
     ORACLE: #oracle
       user: 'root'        # 用户
@@ -89,8 +90,8 @@
       host: '192.168.7.0:1521/ORCL'   # 数据库地址
 
     REDIS: #redis
-      host: '127.0.0.1'   # 数据库地址
-      port: 3306          # 端口
+      host: 'testing.redis.qoo-app.app'   # 数据库地址
+      port: 6379          # 端口
       password: 'root'    #密码
 
     REDIS_CLUSTER: #redis 集群
